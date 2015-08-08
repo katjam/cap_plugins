@@ -106,21 +106,20 @@ function cap_add_terms_to_film_type() {
 
 function cap_custom_film_type_admin() {
 	add_meta_box(
-		'cap_film_prod_image',
-		'Film Production Image',
-		'display_cap_film_image_meta_box',
+		'cap_film_prod_galeryid',
+		'Film Production Gallery Id',
+		'display_cap_film_galleryid_meta_box',
 		'capriol-film', 'normal', 'high'
 	);
 }
 
-function display_cap_film_image_meta_box( $film ) {
+function display_cap_film_galleryid_meta_box( $film ) {
 	// Retrieve current field values.
-	$image = get_post_meta( $film->ID, 'cap_film_prod_image', true );
-
+	$galleryid = get_post_meta( $film->ID, 'cap_film_prod_galleryid', true );
   // Create nonce field for verification
   wp_nonce_field( basename( __FILE__ ), 'cap_film_prod_nonce');
-
-  $output  = '<textarea name="cap_film_prod_image" cols="65" value="'. $definition .'">' . $definition . '</textarea>';
+  // Todo make this a select list of gallery ids.
+  $output  = '<input type="text" name="cap_film_prod_galleryid" value="' . $galleryid . '" class="" />';
 
 	echo $output;
 }
@@ -131,7 +130,7 @@ function save_cap_film_prod_custom_fields( $film_id ) {
   if ( !isset( $_POST['cap_film_prod_nonce'] )
         || !wp_verify_nonce( $_POST['cap_film_prod_nonce'], basename( __FILE__ ) ) 
       )
-        return $post_id;
+        return $film_id;
 
   // Check post type for film production 
 	$film = get_post( $film_id );
@@ -139,7 +138,7 @@ function save_cap_film_prod_custom_fields( $film_id ) {
     foreach ( $_POST as $key => $value ) {
       // Store data in post meta table if present in post data
       if ( isset( $value ) && $value != '' ) {
-				update_post_meta( $word_id, $key, $value );
+				update_post_meta( $film_id, $key, $value );
 			}	
 		}
 	}
